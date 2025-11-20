@@ -1,0 +1,21 @@
+export default function LoginLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-200 via-pink-300 to-purple-400" />
+      <DecorShapes />
+      <div className="relative z-10 w-full max-w-2xl">{children}</div>
+    </div>
+  );
+}
+
+function DecorShapes() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <span className="absolute left-10 top-16 h-3 w-3 bg-pink-500 rounded-full opacity-70" />
+      <span className="absolute right-12 top-24 h-4 w-4 bg-emerald-400 rounded-sm rotate-12 opacity-70" />
+      <span className="absolute left-1/2 top-8 h-3 w-10 bg-purple-500/60 rounded-full blur-sm -translate-x-1/2" />
+      <span className="absolute left-16 bottom-24 h-3 w-3 rounded-full bg-yellow-400 opacity-80" />
+      <span className="absolute right-20 bottom-16 h-3 w-3 rounded-full bg-cyan-400 opacity-80" />
+    </div>
+  );
+}
