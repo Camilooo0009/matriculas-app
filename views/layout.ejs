@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || 'App Colegio' %></title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <nav class="bg-white border-b px-4 py-2 flex items-center justify-between">
+    <div class="font-semibold">Colegio</div>
+    <div>
+      <% if (usuario) { %>
+        <span class="mr-3">Hola, <%= usuario.nombre %> (<%= usuario.rol %>)</span>
+        <a href="/logout" class="btn">Salir</a>
+      <% } %>
+    </div>
+  </nav>
+  <main class="container mx-auto p-6">
+    <%- body || '' %>
+    <%- typeof content === 'function' ? content() : '' %>
+  </main>
+</body>
+</html>

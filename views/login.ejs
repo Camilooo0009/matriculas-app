@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen bg-gray-50 grid place-items-center">
+  <div class="card w-full max-w-md">
+    <h1 class="text-xl font-semibold mb-4">Iniciar sesión</h1>
+    <% if (typeof error !== 'undefined') { %>
+      <div class="alert"><%= error %></div>
+    <% } %>
+    <form method="post" action="/login" class="space-y-3">
+      <div>
+        <label class="label">Correo</label>
+        <input class="input" type="email" name="email" placeholder="correo@colegio.edu" required />
+      </div>
+      <div>
+        <label class="label">Contraseña</label>
+        <input class="input" type="password" name="password" placeholder="********" required />
+      </div>
+      <button class="btn w-full" type="submit">Entrar</button>
+    </form>
+    <p class="mt-4 text-sm text-gray-600">Admin inicial: admin@colegio.edu / admin123</p>
+  </div>
+</body>
+</html>
