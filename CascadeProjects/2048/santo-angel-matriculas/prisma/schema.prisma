@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EnrollmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentMethod {
+  CASH
+  ONLINE
+  TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+model Student {
+  id             String    @id @default(cuid())
+  documentNumber String    @unique
+  firstName      String
+  lastName       String
+  birthDate      DateTime?
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  guardian   Guardian? @relation(fields: [guardianId], references: [id])
+  guardianId String?
+
+  grade   Grade?  @relation(fields: [gradeId], references: [id])
+  gradeId String?
+
+  enrollments    Enrollment[]
+  tuitionCharges TuitionCharge[]
+  payments       Payment[]
+  discounts      Discount[]
+}
+
+model Guardian {
+  id        String   @id @default(cuid())
+  fullName  String
+  phone     String?
+  email     String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  students Student[]
+}
+
+model Grade {
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  tuitionMonthlyCents Int
+  enrollmentFeeCents  Int
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  students    Student[]
+  enrollments Enrollment[]
+  discounts   Discount[]
+}
+
+model Enrollment {
+  id        String           @id @default(cuid())
+  student   Student          @relation(fields: [studentId], references: [id])
+  studentId String
+  grade     Grade            @relation(fields: [gradeId], references: [id])
+  gradeId   String
+  year      Int
+  status    EnrollmentStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+}
+
+model TuitionCharge {
+  id            String    @id @default(cuid())
+  student       Student   @relation(fields: [studentId], references: [id])
+  studentId     String
+  month         Int // 1-12
+  year          Int
+  amountCents   Int
+  discountCents Int       @default(0)
+  lateFeeCents  Int       @default(0)
+  dueDate       DateTime?
+  paid          Boolean   @default(false)
+  paidAt        DateTime?
+
+  payments Payment[]
+
+  @@unique([studentId, month, year])
+}
+
+model Payment {
+  id          String         @id @default(cuid())
+  student     Student        @relation(fields: [studentId], references: [id])
+  studentId   String
+  charge      TuitionCharge? @relation(fields: [chargeId], references: [id])
+  chargeId    String?
+  amountCents Int
+  method      PaymentMethod
+  status      PaymentStatus  @default(PENDING)
+  gateway     String? // e.g., WOMPI, PAYU, EPAYCO
+  reference   String? // gateway reference/id
+  createdAt   DateTime       @default(now())
+}
+
+model Discount {
+  id          String   @id @default(cuid())
+  name        String
+  percent     Int? // 0-100
+  amountCents Int?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Scope: by grade or student
+  grade     Grade?   @relation(fields: [gradeId], references: [id])
+  gradeId   String?
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+}
